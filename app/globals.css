@@ -1,0 +1,240 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+}
+
+:root {
+  color-scheme: light;
+
+  /* ============================================================
+     STEPLY — LIGHT EDITORIAL THEME
+     ============================================================ */
+
+  /* Base */
+  --background: #fafaf7;
+  --foreground: #151515;
+
+  /* Cards */
+  --card: #ffffff;
+  --card-foreground: #151515;
+
+  /* Brand */
+  --primary: #e4f70a;
+  --primary-foreground: #151515;
+
+  /* Accent */
+  --accent: #e4f70a;
+  --accent-foreground: #151515;
+
+  /* Muted surfaces */
+  --muted: #f3f3ee;
+  --muted-foreground: #716f67;
+
+  /* Borders */
+  --border: #dcdcd4;
+
+  /* Focus ring */
+  --ring: #e4f70a;
+
+  /* Radius */
+  --radius: 0.875rem;
+}
+
+/* ================================================================
+   BASE
+   ================================================================ */
+
+* {
+  @apply border-border;
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground font-sans antialiased;
+
+  selection-background-color: #e4f70a;
+  selection-color: #151515;
+}
+
+::selection {
+  background: #e4f70a;
+  color: #151515;
+}
+
+/* Prevent horizontal overflow */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* ================================================================
+   CONTAINER
+   ================================================================ */
+
+.container-shell {
+  @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10;
+}
+
+/* ================================================================
+   EDITORIAL GRID
+   ================================================================ */
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-size: 40px 40px;
+
+    background-image:
+      linear-gradient(
+        to right,
+        rgba(21, 21, 21, 0.035) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(21, 21, 21, 0.035) 1px,
+        transparent 1px
+      );
+  }
+
+  /* ============================================================
+     LIGHT CARD
+     ============================================================ */
+
+  .light-card {
+    background: rgba(255, 255, 255, 0.92);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(220, 220, 212, 0.9);
+
+    box-shadow:
+      0 20px 30px -10px rgba(21, 21, 21, 0.05),
+      0 10px 15px -5px rgba(21, 21, 21, 0.025);
+  }
+
+  /* ============================================================
+     LIME SPOTLIGHT
+     ============================================================ */
+
+  .lime-spotlight {
+    background: radial-gradient(
+      circle,
+      rgba(228, 247, 10, 0.12) 0%,
+      rgba(228, 247, 10, 0.045) 38%,
+      rgba(250, 250, 247, 0) 72%
+    );
+  }
+
+  /* Very subtle lime glow */
+  .lime-glow {
+    box-shadow:
+      0 0 0 1px rgba(228, 247, 10, 0.15),
+      0 10px 35px rgba(228, 247, 10, 0.08);
+  }
+
+  /* ============================================================
+     EDITORIAL SURFACE
+     ============================================================ */
+
+  .surface {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 2px rgba(21, 21, 21, 0.04);
+  }
+
+  .surface-soft {
+    background: #f3f3ee;
+  }
+
+  .surface-warm {
+    background: #f7f7f2;
+  }
+
+  /* ============================================================
+     DARK PRODUCT SURFACE
+     ============================================================ */
+
+  .surface-dark {
+    background: #151515;
+    color: #ffffff;
+  }
+
+  /* ============================================================
+     SUBTLE DIVIDER
+     ============================================================ */
+
+  .divider-soft {
+    border-color: #e2e2da;
+  }
+
+  /* ============================================================
+     TEXT HELPERS
+     ============================================================ */
+
+  .text-muted {
+    color: #716f67;
+  }
+
+  .text-brand {
+    color: #e4f70a;
+  }
+
+  /* ============================================================
+     BRAND DOT
+     ============================================================ */
+
+  .brand-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: #e4f70a;
+  }
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
