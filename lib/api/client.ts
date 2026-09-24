@@ -26,7 +26,12 @@ export class ApiRequestError extends Error {
   }
 }
 
-export const baseUrl = "http://127.0.0.1:8000"
+export const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:8000"
+
+// API so'rovlari Next.js proxy orqali yuboriladi (same-origin → cookie ishlaydi).
+// next.config.mjs: { source: '/api/v1/:path*', destination: `${backendUrl}/api/v1/:path*` }
+// To'g'ridan-to'g'ri fayl URL lari (PDF, ZIP yuklab olish) esa `baseUrl` ishlatadi.
+const API_BASE = ""
 
 /** Auth holati o'zgarganda (login/logout/refresh muvaffaqiyatsiz) chiqariladigan hodisa. */
 export function notifyAuthChanged() {
@@ -64,7 +69,7 @@ async function tryRefresh(): Promise<boolean> {
         // mustaqil, kriptografik jihatdan mos kelmaydigan token turi
         // (boshqa issuer/audience/type — qarang: backend
         // app/modules/exams_auth/security.py).
-        const res = await fetch(`${baseUrl}/api/v1/exams-auth/refresh`, {
+        const res = await fetch(`/api/v1/exams-auth/refresh`, {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -103,7 +108,7 @@ export async function apiRequest<T>(path: string, init: RequestOptions = {}): Pr
   const { anonymous, skipAuthRetry, query, isForm, headers, ...rest } = init
 
   const doFetch = async (): Promise<Response> =>
-    fetch(`${baseUrl}/api/v1${path}${buildQuery(query)}`, {
+    fetch(`${API_BASE}/api/v1${path}${buildQuery(query)}`, {
       ...rest,
       credentials: 'include',
       headers: {

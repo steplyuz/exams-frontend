@@ -389,7 +389,8 @@ export const speakingApi = {
   mockAccess: (input: Record<string, unknown>) => apiPost<Record<string, unknown>>('/speaking-tests/mock-access', input, { anonymous: true }),
 
   // examx.steply.uz (exams-auth) — bitta MK-ID sessiyasiga biriktirilgan test.
-  assignedTest: (mockSkillAttemptId: number) => apiGet<AssignedSpeakingTest>(`/exams/speaking/attempts/${mockSkillAttemptId}/assigned-test`),
+  // API: GET /api/v1/speaking-tests/attempts/{mock_skill_attempt_id}/assigned-test
+  assignedTest: (mockSkillAttemptId: number) => apiGet<AssignedSpeakingTest>(`/speaking-tests/attempts/${mockSkillAttemptId}/assigned-test`),
   myAssignedTest: () => apiGet<AssignedSpeakingTest>('/exams/speaking/me/assigned-test'),
   submitAudio: (speakingTestId: string, file: File | Blob, mockSkillAttemptId?: number) => {
     const form = new FormData()
@@ -475,6 +476,6 @@ export const adminApi = {
 // Root va health-check /api/v1 prefiksisiz, shuning uchun to'g'ridan-to'g'ri fetch qilinadi.
 
 export const systemApi = {
-  root: () => fetch(`${baseUrl}/`).then((r) => r.json()),
-  health: () => fetch(`${baseUrl}/health`).then((r) => r.json()),
+  root: () => fetch(`/`).then((r) => r.json()),
+  health: () => fetch(`/health`).then((r) => r.json()),
 }

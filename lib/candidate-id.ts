@@ -1,16 +1,17 @@
 /**
  * candidate-id.ts
  *
- * ID format: MK-290706568
+ * Backend formati: MK-DDMMYY-NNN
  *   MK  = Mock
- *   29  = tug'ilgan sana (DD)
- *   07  = oy (MM)
- *   06  = yil oxirgi 2 raqami (YY)
- *   5   = jins (5=erkak, 6=ayol)
- *   6   = bugungi sana + oy / yil (Math.floor((DD+MM)/YY) % 10)
- *   8   = ro'yxatdan o'tish tartib raqami (1-raqamli)
+ *   DD  = tug'ilgan sana
+ *   MM  = oy
+ *   YY  = yil (oxirgi 2 raqam)
+ *   NNN = 3 xonali tartib raqami
  *
- * Demo ID:  MK-290706568
+ * Misol: MK-290706-785
+ *
+ * Eski format (MK-290706568) ham qabul qilinadi va avtomatik
+ * to'g'ri formatga o'giriladi: MK-DDMMYY-NNN.
  */
 
 export type ParsedId = {
@@ -18,48 +19,55 @@ export type ParsedId = {
   day: number
   month: number
   year: number
-  gender: "M" | "F"
-  checkDigit: number
-  seqDigit: number
-  raw: string
+  seq: string   // 3 xonali tartib raqami (string, masalan "785")
+  raw: string   // backend'ga yuborish uchun: "MK-290706-785"
 }
 
-export function parseId(raw: string): ParsedId | null {
-  const trimmed = raw.trim().toUpperCase()
-  // Format: MK-DDMMYYGSE  (10 chars after prefix)
-  const match = trimmed.match(/^(MK)-(\d{2})(\d{2})(\d{2})(\d)(\d)(\d)$/)
-  if (!match) return null
+export function parseId(input: string): ParsedId | null {
+  const trimmed = input.trim().toUpperCase()
 
-  const [, type, dd, mm, yy, g, checkDigit, seq] = match
-  const day = parseInt(dd, 10)
-  const month = parseInt(mm, 10)
-  const year = parseInt(yy, 10)
-  const genderDigit = parseInt(g, 10)
-  const check = parseInt(checkDigit, 10)
-  const seqNum = parseInt(seq, 10)
-
-  if (day < 1 || day > 31) return null
-  if (month < 1 || month > 12) return null
-  if (genderDigit !== 5 && genderDigit !== 6) return null
-
-  // Validate check digit: Math.floor((day + month) / (year || 1)) % 10
-  const expectedCheck = Math.floor((day + month) / (year || 1)) % 10
-  if (check !== expectedCheck) return null
-
-  return {
-    type: "MK",
-    day,
-    month,
-    year,
-    gender: genderDigit === 5 ? "M" : "F",
-    checkDigit: check,
-    seqDigit: seqNum,
-    raw: trimmed,
+  // Format 1 (yangi, to'g'ri): MK-DDMMYY-NNN
+  const newFmt = trimmed.match(/^MK-(\d{2})(\d{2})(\d{2})-(\d{3})$/)
+  if (newFmt) {
+    const [, dd, mm, yy, seq] = newFmt
+    const day = parseInt(dd, 10)
+    const month = parseInt(mm, 10)
+    if (day < 1 || day > 31) return null
+    if (month < 1 || month > 12) return null
+    return {
+      type: "MK",
+      day,
+      month,
+      year: parseInt(yy, 10),
+      seq,
+      raw: trimmed, // allaqachon to'g'ri format
+    }
   }
+
+  // Format 2 (eski, 7 ta raqam): MK-DDMMYYGSE
+  // Oxirgi 3 raqam → NNN sifatida ishlatiladi
+  const oldFmt = trimmed.match(/^MK-(\d{2})(\d{2})(\d{2})(\d{3})$/)
+  if (oldFmt) {
+    const [, dd, mm, yy, seq] = oldFmt
+    const day = parseInt(dd, 10)
+    const month = parseInt(mm, 10)
+    if (day < 1 || day > 31) return null
+    if (month < 1 || month > 12) return null
+    const normalized = `MK-${dd}${mm}${yy}-${seq}`
+    return {
+      type: "MK",
+      day,
+      month,
+      year: parseInt(yy, 10),
+      seq,
+      raw: normalized, // backend kutgan format
+    }
+  }
+
+  return null
 }
 
 export function formatIdDisplay(parsed: ParsedId): string {
-  const genderLabel = parsed.gender === "M" ? "Erkak" : "Ayol"
   const fullYear = parsed.year + (parsed.year > 50 ? 1900 : 2000)
-  return `${parsed.day.toString().padStart(2, "0")}.${parsed.month.toString().padStart(2, "0")}.${fullYear} • ${genderLabel} • #${parsed.seqDigit}`
+  return `${parsed.day.toString().padStart(2, "0")}.${parsed.month.toString().padStart(2, "0")}.${fullYear} • #${parsed.seq}`
 }
