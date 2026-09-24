@@ -26,7 +26,7 @@ export class ApiRequestError extends Error {
   }
 }
 
-export const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? ''
+export const baseUrl = "http://127.0.0.1:8000"
 
 /** Auth holati o'zgarganda (login/logout/refresh muvaffaqiyatsiz) chiqariladigan hodisa. */
 export function notifyAuthChanged() {
